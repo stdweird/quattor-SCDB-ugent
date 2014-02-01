@@ -1,0 +1,30 @@
+#!/bin/sh
+#chkconfig: 345 20 99
+#description: rsync daemon
+#processname: rsyncd
+. /etc/rc.d/init.d/functions
+
+PIDFILE=/var/run/rsyncd.pid
+
+
+[ -f /usr/bin/rsync ] || exit 0
+
+case "$1" in
+    start)
+        action "Starting rsyncd: " /usr/bin/rsync --daemon
+        ;;
+    stop)
+        if [ -f $PIDFILE ]; then
+            PID=`cat $PIDFILE`
+            action "Stopping rsyncd: " kill $PID
+        else
+            echo "$PIDFILE not found. rsyncd not running?"
+        fi
+        ;;
+    *)
+        echo "Usage: rsyncd {start|stop}"
+        exit 1
+esac
+
+exit 0
+

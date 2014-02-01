@@ -1,0 +1,30 @@
+unique template common/ofed/rpms/1.5.4.1/debuginfo;
+
+prefix "/software/packages";
+
+"{libmthca-debuginfo}"  = nlist();
+"{infinipath-psm-debuginfo}"  = nlist();
+"{libipathverbs-debuginfo}"  = nlist();
+"{qperf-debuginfo}"  = nlist();
+"{libibmad-debuginfo}"  = nlist();
+"{perftest-debuginfo}"  = nlist();
+"{libibumad-debuginfo}"  = nlist();
+"{infiniband-diags-debuginfo}"  = nlist();
+"{libnes-debuginfo}"  = nlist();
+"{libmlx4-debuginfo}"  = nlist();
+"{tgt-generic-debuginfo}"  = nlist();
+"{rds-tools-debuginfo}"  = nlist();
+"{libsdp-debuginfo}"  = nlist();
+"{libibverbs-debuginfo}"  = nlist();
+"{opensm-debuginfo}"  = nlist();
+"{mstflint-debuginfo}"  = nlist();
+"{compat-dapl-debuginfo}"  = nlist();
+"{sdpnetstat-debuginfo}"  = nlist();
+"{librdmacm-debuginfo}"  = nlist();
+"{ibacm-debuginfo}"  = nlist();
+"{ibutils-debuginfo}"  = nlist();
+"{libcxgb3-debuginfo}"  = nlist();
+"{dapl-debuginfo}"  = nlist();
+"{libibcm-debuginfo}"  = nlist();
+"{srptools-debuginfo}"  = nlist();
+"{ibsim-debuginfo}"  = nlist();
