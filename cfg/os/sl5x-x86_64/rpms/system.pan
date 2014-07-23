@@ -6,3 +6,5 @@ prefix "/software/packages";
 "{crontabs}" = nlist();
 "{util-linux}" = nlist();
 "{python-elementtree}" = nlist();
+"{python-simplejson}" = nlist();
+

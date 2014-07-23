@@ -30,6 +30,13 @@ prefix "/software/components/metaconfig/services/{/etc/httpd/conf.d/secrets.conf
 "ssl/carevocationfile" = "/var/sindes/crl.pem";
 "ip/0" = DB_IP[HOSTNAME];
 
+"log/level" = "warn";
+"log/error" = format("logs/%s_error_log", 'secrets');
+"log/transfer" = format("logs/%s_access_log", 'secrets');
+"log/custom"=append(nlist(
+    "location", format("logs/%s_request_log", 'secrets'),
+    "name", "ssl_combined"));
+
 prefix "/software/components/metaconfig/services/{/etc/httpd/conf.d/secrets.conf}";
 
 "module" = "httpd/generic_server";

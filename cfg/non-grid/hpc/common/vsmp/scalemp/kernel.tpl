@@ -2,7 +2,7 @@ unique template common/vsmp/scalemp/kernel;
 
 
 variable SCALEMP_KERNEL_TYPE = "scalemp";
-variable SCALEMP_KERNEL_VERSION = "2.6.32-358.11.1.el6.vSMP.1.ug";
+variable SCALEMP_KERNEL_VERSION = "2.6.32-358.23.2.el6.vSMP.1.ug.1";
 
 
 include { 'common/vsmp/scalemp/kernel_'+ SCALEMP_KERNEL_TYPE};

@@ -353,7 +353,11 @@ structure template common/httpd/struct/httpd_conf_el6;
         "name", "agent",
         "expr", '%{User-agent}i', 
         ),
-);
+    nlist(
+        "name", "ssl_combined",
+        "expr", '%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b',
+        ),
+ );
 "log/custom" = list(
     nlist(
         "name", "combined",

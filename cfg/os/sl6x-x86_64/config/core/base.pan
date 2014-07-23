@@ -34,6 +34,9 @@ variable PKG_ARCH_BASE ?= PKG_ARCH_DEFAULT;
 include {'config/core/daemons'};
 include { 'config/core/boot'};
 
+prefix "/software/packages";
+"{kernel-firmware}" = nlist();
+"{grub}" = nlist();
 
 # Local site OS configuration
 variable OS_BASE_CONFIG_SITE_INCLUDE = if ( exists(OS_BASE_CONFIG_SITE) && is_defined(OS_BASE_CONFIG_SITE) ) {

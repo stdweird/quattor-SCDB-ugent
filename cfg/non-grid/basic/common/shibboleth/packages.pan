@@ -1,5 +1,9 @@
 unique template common/shibboleth/packages;
 
+variable OS_REPOSITORY_LIST = {
+    append('shibboleth');
+};
+
 prefix "/software/packages";
 
 "{curl-openssl}" = nlist();

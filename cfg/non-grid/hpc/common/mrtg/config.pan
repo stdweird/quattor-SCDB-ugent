@@ -5,7 +5,7 @@ include {'common/mrtg/schema'};
 
 prefix "/software/components/metaconfig/services/{/etc/mrtg/mrtg.cfg}";
 
-"module" = "mrtg";
+"module" = "mrtg/main";
 "mode" = 0644;
 "owner" = "root";
 "group" = "root";

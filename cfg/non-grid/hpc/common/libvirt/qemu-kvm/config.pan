@@ -4,9 +4,16 @@ variable WIPE_AUTOSTART_DEFAULT_NETWORK ?= true;
 include {if(WIPE_AUTOSTART_DEFAULT_NETWORK) {'common/libvirt/qemu-kvm/wipe_autostart_default_network'}};
 
 # software
-prefix "/software/packages";
-"{qemu-kvm}" = nlist(); 
-"{qemu-kvm-tools}" = nlist(); # no deps on qemu-kvm ...
+variable QEMU_KVM_RHEV ?= false;
+"/software/packages" = {
+    suff='';
+    if(QEMU_KVM_RHEV) {
+        suff='-rhev';
+    };
+    SELF[escape(format("qemu-kvm%s", suff))] = nlist();
+    SELF[escape(format("qemu-kvm-tools%s", suff))] = nlist();
+    SELF;
+};    
 
 "/software/packages" = {
     if (LIBVIRT_MAJORVERSION > 0) {

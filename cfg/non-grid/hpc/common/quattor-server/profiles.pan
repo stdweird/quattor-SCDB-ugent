@@ -39,12 +39,25 @@ prefix "/software/components/metaconfig/services/{/etc/httpd/conf.d/profiles.con
 "perl/modules/1" = "SINDES::GetCertificate2";
 "perl/switches/0" = "-I/usr/lib/perl";
 
+"log/level" = "warn";
+"log/error" = format("logs/%s_error_log", 'profiles');
+"log/transfer" = format("logs/%s_access_log", 'profiles');
+"log/custom"=append(nlist(
+    "location", format("logs/%s_request_log", 'profiles'),
+    "name", "ssl_combined"));
+
+
 prefix "/software/components/metaconfig/services/{/etc/httpd/conf.d/profiles.conf}";
 
 "module" = "httpd/generic_server";
 "daemon/0" = "httpd";
 
-"contents/aliases" = list();
+"contents/aliases" = list(
+#    nlist(
+#        "url", "/",
+#        "destination", "/var/www/https/profiles",
+#        ),
+);
 "contents/modules" = list();
 "contents/encodings/0/mime" = "x-gzip";
 "contents/encodings/0/extensions" = list(".gz", ".tgz");

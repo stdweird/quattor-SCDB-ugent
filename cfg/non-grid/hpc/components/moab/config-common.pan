@@ -14,7 +14,7 @@
 #
 
 # #
-      # moab, 13.9.0, 1, 20130919-1245
+      # moab, 14.6.0, 1, 20130919-1245
       #
 
 unique template components/moab/config-common;
@@ -24,7 +24,7 @@ include { 'components/moab/schema' };
 # Set prefix to root of component configuration.
 prefix '/software/components/moab';
 
-'version' = '13.9.0';
+'version' = '14.6.0';
 #'package' = 'NCM::Component';
 
 'active' ?= true;

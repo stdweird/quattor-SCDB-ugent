@@ -32,6 +32,7 @@ prefix "/software/components/metaconfig/services/{/etc/httpd/conf.d/wsgi.conf}/c
 "aliases/1/url" = "/django";
 "aliases/1/destination" = "/var/www/django/accountpage/wsgi.py";
 "aliases/1/type" = "wsgiscript";
+"wsgi/passauthorization" = "on";
 
 # can only be set in systemwide setting
 prefix "/software/components/metaconfig/services/{/etc/httpd/conf.d/wsgi.conf}/contents/global";

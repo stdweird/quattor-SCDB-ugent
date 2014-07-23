@@ -13,3 +13,5 @@ prefix '/software/packages';
 "{python-oauthlib}" = nlist();
 "{django-braces}" = nlist();
 "{django-oauth-toolkit}" = nlist();
+"{python-django-south}" = nlist();
+"{python-django-secure}" = nlist();

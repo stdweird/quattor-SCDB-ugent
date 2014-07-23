@@ -31,3 +31,7 @@ prefix "/software/components/metaconfig/services/{/etc/buildrpm.conf}/contents";
         "";
     }
 };
+
+prefix "/software/packages";
+"{clusterbuildrpm-server}" = nlist();
+

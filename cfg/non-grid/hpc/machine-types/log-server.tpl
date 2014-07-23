@@ -1,6 +1,5 @@
 unique template machine-types/log-server;
 
-final variable SYSLOG_PORT ?= 5678;
 final variable LOGSTASH_JAVA_MEM_X = 512;
 
 include 'machine-types/core';

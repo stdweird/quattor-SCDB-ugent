@@ -3,8 +3,8 @@ unique template common/slocate/config;
 ## FC14 defaults
 variable SLOCATE_PRUNEFS ?= list(
     "9p", "afs", "anon_inodefs", "auto", "autofs", "bdev", "binfmt_misc", 
-    "cgroup", "cifs", "coda", "configfs", "cpuset", "debugfs", "devpts", 
-    "ecryptfs", "exofs", "fuse", "fusectl", "gfs", "gfs2", "hugetlbfs", 
+    "ceph", "ceph-fuse", "cgroup", "cifs", "coda", "configfs", "cpuset", "debugfs",
+    "devpts", "ecryptfs", "exofs", "fuse", "fusectl", "gfs", "gfs2", "hugetlbfs",
     "inotifyfs", "iso9660", "jffs2", "lustre", "gpfs", "mqueue", "ncpfs", "nfs", 
     "nfs4", "nfsd", "pipefs", "proc", "ramfs", "rootfs", "rpc_pipefs", 
     "securityfs", "selinuxfs", "sfs", "sockfs", "sysfs", "tmpfs", "ubifs", 
@@ -12,6 +12,7 @@ variable SLOCATE_PRUNEFS ?= list(
 variable SLOCATE_PRUNEPATHS ?= list(
     "/afs","/media","/net","/sfs", "/udev", 
     "/var/cache/ccache", "/var/spool/cups","/var/spool/squid",
+    "/var/lib/ceph/osd", "/var/lib/ceph/log",
     "/tmp","/var/tmp"
 );
 variable SLOCATE_PRUNEPATHS_SITE ?= list();

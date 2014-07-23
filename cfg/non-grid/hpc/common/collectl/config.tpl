@@ -17,17 +17,18 @@ bind "/software/components/metaconfig/services/{/etc/collectl.conf}/contents" = 
 
 prefix "/software/components/metaconfig/services/{/etc/collectl.conf}";
 "daemon" =  {if (START_COLLECTL_AS_SERVICE) { list("collectl") } else { null }};
-"module" = "collectl";
+"module" = "collectl/main";
 
 
 variable COLLECTL_DAEMONMETRICS ?= '-s+YZ';
 variable COLLECTL_DAEMONOTHEROPTS ?= '';
 variable COLLECTL_GRAPHITE_CARBON_SERVER ?= undef; # needs to be the plaintext port
+variable COLLECTL_GRAPHITE_CARBON_OPTS ?= '';
 variable COLLECTL_GRAPHITE ?= false;
 
 variable COLLECTL_DAEMONCOMMANDS ?= {
     if(COLLECTL_GRAPHITE) {
-        format('--export graphite,%s %s %s', COLLECTL_GRAPHITE_CARBON_SERVER, COLLECTL_DAEMONMETRICS, COLLECTL_DAEMONOTHEROPTS);
+        format('--export graphite,%s%s %s %s', COLLECTL_GRAPHITE_CARBON_SERVER, COLLECTL_GRAPHITE_CARBON_OPTS, COLLECTL_DAEMONMETRICS, COLLECTL_DAEMONOTHEROPTS);
     } else {
         format('-f /var/log/collectl -r00:00,7 -m -F60 %s %s', COLLECTL_DAEMONMETRICS, COLLECTL_DAEMONOTHEROPTS);
     };

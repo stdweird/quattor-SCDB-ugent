@@ -14,7 +14,7 @@
 #
 
 # #
-      # moab, 13.9.0, 1, 20130919-1245
+      # moab, 14.6.0, 1, 20130919-1245
       #
 
 unique template components/moab/config;

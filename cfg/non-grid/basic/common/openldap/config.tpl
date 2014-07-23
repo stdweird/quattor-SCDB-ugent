@@ -17,8 +17,8 @@ include {'components/syslog/config'};
 "/software/components/syslog/config" = {
     prepend(
         nlist(
-            "action",
-            'if \(\$programname == "slapd" and not \(\$msg contains "ACCEPT"\) and not \(\$msg contains "unrecognized"\)\) then ~'
+            "action", # no double quotes for text literal!
+            "if ($programname == 'slapd' and not ($msg contains 'ACCEPT') and not ($msg contains 'unrecognized')) then ~"
             ));
     prepend(nlist("selector", list(nlist("facility", "local4",
                                          "priority", "warning")),

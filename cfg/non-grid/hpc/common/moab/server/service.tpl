@@ -82,6 +82,12 @@ include { 'components/profile/config' };
     SELF;
 };
 
+include { 'components/accounts/config' };
+"/software/components/accounts/groups/moab" =
+  nlist("gid", 498);
+
+
+
 variable MOAB_USE_UTILS_MONITORING ?= true;
 include {if(MOAB_USE_UTILS_MONITORING) {'common/moab/server/utils/monitoring'}};
 

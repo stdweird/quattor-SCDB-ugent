@@ -17,7 +17,6 @@ include { 'monitoring/icinga/service' };
 
 include { 'common/pbsacc2db/service' };
 include { 'common/pbsmon2php/service' };
-include 'common/server-locator/service';
 
 #
 # updates

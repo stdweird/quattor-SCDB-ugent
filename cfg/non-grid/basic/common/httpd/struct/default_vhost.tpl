@@ -14,3 +14,10 @@ structure template common/httpd/struct/default_vhost;
 "documentroot" = "/var/www/https";
 "ip/0" = DB_IP[HOSTNAME];
 "ssl" = create("common/httpd/struct/basic_ssl");
+
+"log/level" = "warn";
+"log/error" = format("logs/%s_%s_error_log", value("servername"), value("port"));
+"log/transfer" = format("logs/%s_%s_access_log", value("servername"), value("port"));
+"log/custom"=append(nlist(
+    "location", format("logs/%s_%s_request_log", value("servername"), value("port")),
+    "name", "ssl_combined"));

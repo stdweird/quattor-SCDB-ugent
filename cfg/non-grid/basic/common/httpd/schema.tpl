@@ -18,18 +18,18 @@ type httpd_kerberos = {
 
 type httpd_shibboleth = {
     "useheaders" ? boolean
-    "requestsetting" ? string[] 
+    "requestsetting" ? string[]
 };
 
 type httpd_log_custom = {
     "location" : string
-    "name" : string # this should be an existing format 
+    "name" : string # this should be an existing format
 };
 
 type httpd_log_format = {
     # logformat "expr" name
     "expr" : string
-    "name" : string 
+    "name" : string
 };
 
 type httpd_log = {
@@ -37,7 +37,7 @@ type httpd_log = {
     "transfer" ? string
     "level" ? string with match(SELF, "^(debug|info|notice|warn|error|crit|alert|emerg)$")
     "format" ? httpd_log_format[]
-    "custom" ? httpd_log_custom[] 
+    "custom" ? httpd_log_custom[]
 };
 
 type httpd_icon_add = {
@@ -111,7 +111,7 @@ type httpd_ssl_global = {
     "cacertificatefile" ? string
     "carevocationfile" ? string
     "carevocationpath" ? string
-    
+
     "verifydepth" ? long
 };
 
@@ -130,7 +130,7 @@ type httpd_nss_vhost = {
     "eccnickname" ? string
     "certificatedatabase" : string
     "dbprefix" ? string
-    
+
     "ocsp" ? boolean
     "ocspdefaultresponder" ? string
     "ocspdefaulturl" ? string
@@ -148,11 +148,11 @@ type httpd_directory_allowoverride = string with match(SELF,'^(All|None|Options|
 type httpd_acl_order = string with match(SELF, "^(allow|deny)$");
 
 type httpd_acl = {
-    "order" ? httpd_acl_order[] 
+    "order" ? httpd_acl_order[]
     "allow" ? type_network_name[]
     "deny" ? type_network_name[]
     "allowoverride" ? httpd_directory_allowoverride[]
-    "satisfy" ? string with match(SELF,"^(All|Any)$")   
+    "satisfy" ? string with match(SELF,"^(All|Any)$")
 };
 
 type httpd_limit_value = string with match(SELF, '^GET|POST|PUT|DELETE|CONNECT|OPTIONS|PATCH|PROPFIND|PROPPATCH|MKCOL|COPY|MOVE|LOCK|UNLOCK$');
@@ -194,7 +194,7 @@ type httpd_proxy_directive = {
 
 type httpd_auth_require = {
     # require type who.join(' ')
-    "type" : string with match(SELF,'^(valid-user|user|group)$') 
+    "type" : string with match(SELF,'^(valid-user|user|group)$')
     "who" ? string[]
 };
 
@@ -242,13 +242,13 @@ type httpd_rewrite_rule = {
 
 type httpd_rewrite_map = {
     "name" : string
-    "type" : string with match(SELF, '^(txt|rnd|dbm|int|prg|dbd|fastdbd)$') 
+    "type" : string with match(SELF, '^(txt|rnd|dbm|int|prg|dbd|fastdbd)$')
     "source" : string
 };
 
 type httpd_rewrite_option = string with match(SELF,'^(Inherit|InheritBefore|AllowNoSlash|AllowAnyURI|MergeBase)$');
 
-type httpd_rewrite = {  
+type httpd_rewrite = {
     "engine" : boolean = true
     "base" ? string
     "rules" ? httpd_rewrite_rule[]
@@ -267,7 +267,8 @@ type httpd_wsgi_iportscript = {
 };
 
 type httpd_wsgi_vhost = {
-    "importscript" ? httpd_wsgi_iportscript  
+    "importscript" ? httpd_wsgi_iportscript
+    "passauthorization" ?  string with match(SELF, '^(on|off)$')
 };
 
 type httpd_listen = {
@@ -366,7 +367,7 @@ type httpd_perl_vhost = {
 
 type httpd_vhost = {
     include httpd_shared
-    
+
     "port" : type_port
     "ip" ? type_ip[]
     "ssl" ? httpd_ssl_vhost
@@ -387,9 +388,9 @@ type httpd_vhost = {
 # system wide settings
 type httpd_global_shared = {
     include httpd_shared
-    
+
     "directoryindex" ? string[]
-    "wsgipythonpath" ? string    
+    "wsgipythonpath" ? string
 };
 
 # server specific system wide only
@@ -402,8 +403,8 @@ type httpd_global_system = {
     "keepalive" : boolean = false
     "maxkeepaliverequests" : long = 100
     "keepalivetimeout" : long = 15
-    "extendedstatus" : boolean = false 
-    "user" : defined_user = "apache" 
+    "extendedstatus" : boolean = false
+    "user" : defined_user = "apache"
     "group" : defined_group = "apache"
     "serveradmin" : string = "root@localhost"
     "usecanonicalname" : boolean = false
@@ -416,7 +417,7 @@ type httpd_global_system = {
     "readmename" : string = "README.html"
     "headername" : string = "HEADER.html"
     "adddefaultcharset" : string = "UTF-8"
-    
+
     "limitrequestfieldsize" ? long
     "traceenable" ? string with match(SELF, '^(on|off|extended)$')
 };
@@ -435,11 +436,11 @@ type httpd_ifmodule_parameters = {
     "minsparethreads" ? long
     "maxsparethreads" ? long
     "threadsperchild" ? long
-    
+
     "userdir" ? string with match(SELF,"^(disabled|public_html)$")
-    
+
     "davlockdb" ? string
-    
+
     "mimemagicfile" ? string
 };
 
@@ -450,7 +451,7 @@ type httpd_ifmodule = {
 
 type httpd_browsermatch = {
     # -> browsermatch "match" names.join(' ')
-    "match" : string 
+    "match" : string
     "names" : string[]
 };
 
@@ -470,7 +471,7 @@ type httpd_global = {
     "handler" ? httpd_handler
     "type" ? httpd_type
     "outputfilter" ? httpd_outputfilter
-    "listen" ? httpd_listen[]    
+    "listen" ? httpd_listen[]
 };
 
 # for conf.d/*.conf
@@ -482,7 +483,7 @@ type httpd_vhosts = {
     "aliases" ? httpd_alias[]
     "directories" ? httpd_directory[]
     "encodings" ? httpd_encoding[]
-    "listen" ? httpd_listen[]    
+    "listen" ? httpd_listen[]
     "handler" ? httpd_handler
     "ifmodules" ? httpd_ifmodule[]
     "type" ? httpd_type

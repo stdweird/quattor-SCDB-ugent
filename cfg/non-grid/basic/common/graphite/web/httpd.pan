@@ -12,6 +12,13 @@ variable HTTPD_OS_FLAVOUR ?= 'el6';
 
 "/software/components/metaconfig/services/{/etc/httpd/conf.d/graphite-web.conf}/contents/vhosts/graphiteweb" = {
     base=create(format('common/httpd/struct/ssl_conf_%s', HTTPD_OS_FLAVOUR));
+    
+    pubvhost=create('common/httpd/struct/public_vhost');
+    
+    foreach(idx;val;list('certificatefile', 'certificatekeyfile', 'cacertificatefile')) {
+        base['vhosts']['base']['ssl'][val] = pubvhost['ssl'][val];
+    };    
+    
     base['vhosts']['base'];
 };
 

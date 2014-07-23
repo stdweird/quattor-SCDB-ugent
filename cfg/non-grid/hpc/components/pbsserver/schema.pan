@@ -209,6 +209,7 @@ type pbs_queue_attlist = {
     'resources_min.pmem'     ? string
     'resources_min.pvmem'    ? string
     'resources_min.vmem'     ? string
+    'resources_min.walltime' ? string
     
     'started'                ? boolean
 

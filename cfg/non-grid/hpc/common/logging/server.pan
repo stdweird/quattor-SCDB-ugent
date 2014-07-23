@@ -8,7 +8,7 @@ prefix "/software/components/metaconfig/services/{/etc/logstash/conf.d/logstash.
 
 "input/plugins" = append(nlist("tcp", nlist(
     "type", "syslog",
-    "port", SYSLOG_PORT,
+    "port", SYSLOG_RELAY_PORT,
 )));
 
 # gelf input

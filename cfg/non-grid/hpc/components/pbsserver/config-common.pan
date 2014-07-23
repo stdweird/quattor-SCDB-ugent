@@ -24,7 +24,7 @@ include { 'components/pbsserver/schema' };
 # Set prefix to root of component configuration.
 prefix '/software/components/pbsserver';
 
-'version' = '13.1.3';
+'version' = '14.6.0';
 #'package' = 'NCM::Component';
 
 'active' ?= true;

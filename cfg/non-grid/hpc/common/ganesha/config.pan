@@ -10,7 +10,7 @@ include { 'components/symlink/config' };
     ));
 
 
-variable GANESHA_VERSION ?= '1.5.0-1.el6.ug.1383170669.69f0338';
+variable GANESHA_VERSION ?= '1.5.0-1.el6.ug.1396503752.cdb3626';
 
 variable GANESHA_LOGFILE ?= format('/var/log/%s.ganesha.nfsd.log',GANESHA_FSAL);
 variable GANESHA_SNMP_ADM_LOGFILE ?= '/var/log/ganesha_snmp_adm.log';

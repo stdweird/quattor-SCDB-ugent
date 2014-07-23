@@ -14,7 +14,7 @@
 #
 
 # #
-      # gold, 13.9.0, 1, 20130919-1245
+      # gold, 14.6.0, 1, 20130919-1245
       #
 
 unique template components/gold/config-xml;

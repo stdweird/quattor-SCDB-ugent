@@ -25,6 +25,10 @@ include { 'os/kernel_version_arch' };
 ## new kernel naming
 "/system/kernel/version" = KERNEL_VERSION;
 
+prefix "/software/packages";
+"{grub}" = nlist();
+
+
 # Default architecture to use for gLite, if several architectures are
 # supported for a service.
 # This variable can be overriden at a site level or in a profile to

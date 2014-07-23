@@ -23,3 +23,11 @@ include { 'common/download/service' };
                                 "owner", "flexlm");
     SELF;
 };
+
+include { 'components/dirperm/config'};
+"/software/components/dirperm/paths" = append(nlist(
+    "path",    LICENSE_DIRECTORY,
+    "owner",   "root:flexlm",
+    "perm",    "0750",
+    "type",    "d",
+    ));

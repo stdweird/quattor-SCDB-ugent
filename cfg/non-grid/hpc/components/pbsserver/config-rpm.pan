@@ -25,6 +25,6 @@ include { 'components/pbsserver/config-common' };
 prefix '/software/components/pbsserver';
 
 # Install Quattor configuration module via RPM package.
-'/software/packages' = pkg_repl('ncm-pbsserver','13.1.3-SNAPSHOT20131017141437','noarch');
+'/software/packages' = pkg_repl('ncm-pbsserver','14.6.0-1','noarch');
 'dependencies/pre' ?= list('spma');
 

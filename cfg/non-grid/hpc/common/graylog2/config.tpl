@@ -14,7 +14,7 @@ prefix "/software/components/accounts";
 
 prefix "/software/components/metaconfig/services/{/etc/graylog2.conf}";
 
-"module" = "graylog/server";
+"module" = "graylog2/server";
 
 "contents/syslog_listen_port" = 5678;
 "contents/rules_file" = "/etc/graylog2/graylog2.drl";

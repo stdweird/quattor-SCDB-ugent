@@ -19,14 +19,20 @@ variable QIB_SINGLEPORT ?= 1;
 variable QIB_KRCVQS ?= -1;
 variable QIB_RCVHDRCNT ?= 4096;
 variable QIB_PCIECAPS ?= '0x51';
-variable QIB_NUMA_AWARE ?= 1;
+variable QIB_NUMA_AWARE ?= undef;
 
 variable QIB_KRCVQS_TXT ?= { if(QIB_KRCVQS >=0) { format("krcvqs=%s",QIB_KRCVQS); } else {''}};
 
 ## no tuning needed?
-# numa_aware=%s , QIB_NUMA_AWARE : not in standard ofed drivers (yet)
-variable CONTENTS = format("options ib_qib singleport=%s %s rcvhdrcnt=%s pcie_caps=%s\n",
-                            QIB_SINGLEPORT,QIB_KRCVQS_TXT,QIB_RCVHDRCNT,QIB_PCIECAPS);
+variable CONTENTS = {
+    moreopts='';
+    if(is_defined(QIB_NUMA_AWARE)) {
+        moreopts=moreopts+format(" numa_aware=%s", QIB_NUMA_AWARE);
+    };
+    txt=format("options ib_qib singleport=%s %s rcvhdrcnt=%s pcie_caps=%s%s\n",
+                            QIB_SINGLEPORT,QIB_KRCVQS_TXT,QIB_RCVHDRCNT,QIB_PCIECAPS,moreopts);
+    txt;
+};
 
 # Now actually add the file to the configuration.
 # No backups for modprobe config files
