@@ -1,0 +1,21 @@
+unique template common/build/rpms/kernel;
+
+prefix "/software/packages";
+"{asciidoc}" = dict();
+"{audit-libs-devel}" = dict();
+"{binutils-devel}" = dict();
+"{elfutils-devel}" = dict();
+"{elfutils-libelf-devel}" = dict();
+"{glib-devel}" = dict();
+"{hmaccalc}" = dict();
+"{libsysfs}" = dict();
+"{libxml2-python}" = dict();
+"{newt-devel}" = dict();
+"{numactl-devel}" = dict();
+"{patchutils}" = dict();
+"{pciutils-devel}" = dict();
+"{perl-ExtUtils-Embed}" = dict();
+"{pesign}" = dict();
+"{tcl-devel}" = dict();
+"{tk}" = dict();
+"{zlib-devel}" = dict();

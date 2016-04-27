@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # The shopt command MUST BE THE FIRST EXECUTED LINE IN THIS SCRIPT
 # Otherwise the entire script will fail to parse!!!
 shopt -s extglob
@@ -9,29 +10,51 @@ remote=origin
 branch=master
 gitpwddir=/root/.quattor-secrets
 gitqpwdfile=$gitpwddir'/passwd.py'
-qpwdfile=cfg/sites/dict/site/secret/passwd.tpl
+qpwdfile=cfg/sites/dict/site/secret/passwd.pan
 
 lockfile=/var/lock/ugentbc
+
+if [ "$USER" == 'root' ]; then
+    sudo=""
+else
+    sudo="sudo"
+fi
+
+if [ ! -f $lockfile ]; then
+    $sudo touch $lockfile
+fi
+$sudo chown root.users $lockfile
+$sudo chmod 770 $lockfile
 
 exec 9>$lockfile
 
 default=`hostname | awk -F. '$1 == "snorlax"{print "cubone"; exit};
-    $2=="gastly"{print "gastly gulpin dugtrio raichu gligar delcatty"; exit};
+    $2=="gastly"{print "raichu gligar delcatty golett phanpy swalot"; exit};
     $2=="ugent"{print "uxie vulpix"; exit};
     {print $2; exit}
 '`
 
+error() {
+    echo "ERROR: $@"
+    exit 1
+}
+
 usage() {
     cat <<EOF
-Usage: bc [--nodeploy] [ <cluster> ] [ <remote> ] [ <branch> ]
+Usage: bc [--nodeploy] [--cleanup] [ <cluster> ] [ <remote> ] [ <branch> ]
 
 With no arguments, it will deploy the default clusters to production.
-The default clusters are $default
+The default clusters are $default.
 
 The first argument, if present must be the cluster to deploy.
 
 The next two arguments are a remote and a branch. The order doesn't
 matter. "master" is only allowed if pulling from origin.
+
+When --nodeploy is used, resulting profiles are not copied and nodes are not notified.
+
+It can happen that bc fails and leaves the directory in an unclean state.
+Then you can use --cleanup with correct <remote> and <branch> to restore the master.
 
 EOF
 
@@ -39,28 +62,24 @@ EOF
 }
 
 
-if ! flock -n 9
-then
+if ! flock -n 9; then
     echo "Another instance of bc is already running. Leaving"
     exit 1
 fi
 
 
-if [ $# -gt 4 ]
-then
+if [ $# -gt 4 ]; then
     usage
 fi
 
-while [ $# -gt 0 ]
-do
-    if [ "$1" = '--nodeploy' ]
-    then
+while [ $# -gt 0 ]; do
+    if [ "$1" = '--nodeploy' ]; then
         nodeploy=1
-    elif [ -z "$clusters" ]
-    then
+    elif [ "$1" = '--cleanup' ]; then
+        cleanup=1
+    elif [ -z "$clusters" -a -z "$cleanup" ]; then
         clusters=$1
-    elif git remote|grep -Fxq $1
-    then
+    elif git remote|grep -Fxq $1 ; then
         remote=$1
     else
         branch=$1
@@ -68,8 +87,7 @@ do
     shift
 done
 
-if [ -z "$clusters" ]
-then
+if [ -z "$clusters" ]; then
     clusters=$default
 fi
 
@@ -82,38 +100,46 @@ checkout_branch()
     local f=$b
 
     git fetch $r
-    if [ $b != 'master' ]
-    then
+    if [ $? -gt 0 ]; then error "!!"; fi
+
+    if [ $b != 'master' ]; then
         git branch --track "$r-$b" "$r/$b" ||
         exit "Unable to create branch $r-$b"
         f="$r-$b"
     fi
     git checkout $f
+    if [ $? -gt 0 ]; then error "!!"; fi
     git reset --hard
+    if [ $? -gt 0 ]; then error "!!"; fi
     git merge --ff $r/$b
+    if [ $? -gt 0 ]; then error "!!"; fi
 }
 
 cleanup_git() {
     local r=$1
     local b=$2
     git reset --hard
+    if [ $? -gt 0 ]; then error "!!"; fi
     git checkout master
+    if [ $? -gt 0 ]; then error "!!"; fi
 
-    if [ $b != 'master' ]
-    then
+    if [ $b != 'master' ]; then
         git branch -D "$r-$b"
     else
         git pull
     fi
+    if [ $? -gt 0 ]; then error "!!"; fi
 }
 
 # Sets the deployment identifier based on the date of the current
 # commit.
 set_quattorid() {
     cid=`git log -1  --date=raw | awk '/Date:/{print $2}'`
+    if [ $? -gt 0 ]; then error "!!"; fi
+
     branch=`git name-rev HEAD|awk '{print $2}'`
-    if [ "$?" != "0" ]
-    then
+
+    if [ "$?" != "0" ]; then
         echo "Something went wrong with git log."
         exit 1
     fi
@@ -125,22 +151,14 @@ set_quattorid() {
 # wish to store in the global Git repository
 set_secrets() {
 
-    if [ -d $gitpwddir ]
-    then
-        if [ -f $gitqpwdfile ]
-        then
-            ./utils/python/utils/genpasswd.py -c $gitqpwdfile -f $qpwdfile
-            if [ "$?" != "0" ]
-            then
-                echo "Failed to replace passwords in $qpwdfile."
-                exit 3
-            fi
-        else
-            echo "Secrets file does not exist."
-            exit 3
-        fi
-    else
-        echo "Secrets directory does not exist."
+    $sudo ./utils/python/utils/genpasswd.py -c $gitqpwdfile -f $qpwdfile
+    if [ "$?" != "0" ]; then
+        echo "Failed to replace passwords in $qpwdfile."
+        exit 3
+    fi
+    $sudo chown $USER.users $qpwdfile
+    if [ "$?" != "0" ]; then
+        echo "Failed to change ownership $USER.$USER on passwords $qpwdfile."
         exit 3
     fi
 }
@@ -148,74 +166,71 @@ set_secrets() {
 files_for_cluster() {
     local cl=$1
 
-
-    if [ $cl = 'uxie' ]
-    then
+    # all regex have to start with .* !!
+    if [ $cl = 'uxie' ]; then
         find_regexargs='.*ugent.be.json.gz ! -regex .*vulpix.*'
     else
-        if [ $cl = 'vulpix' ]
-        then
-            find_regexargs='vulpix.*ugent.be.json.gz'
+        if [ $cl = 'vulpix' ]; then
+            find_regexargs='.*vulpix.*ugent.be.json.gz'
         else
-            if [ $cl = 'muk_quattor' ]
-            then
+            if [ $cl = 'muk_quattor' ]; then
                 find_regexargs='.*muk.*json.gz'
             else
                 find_regexargs=".*$cl.*json.gz"
             fi
         fi
     fi
-    
+
     find build/xml -regex $find_regexargs -type f
 }
 
 # Compile and, if needed, deploy the specified clusters
 compile_and_deploy() {
 
-    if [ `basename $0` == "bc" ]
-    then
-    local id="nlist('system', nlist('quattorid', '`set_quattorid`'))"
-    for cluster in $clusters
-    do
-        echo "Processing cluster $cluster"
-        if [ $nodeploy -eq 0 ]
-        then
-            external/ant/bin/ant build.deploy.cluster \
-            -Dpan.root.element="$id" \
-            -Ddeploy.debug.task=true -Dcluster=$cluster
+    if [ `basename $0` == "bc" ]; then
+        local id="nlist('system', nlist('quattorid', '`set_quattorid`'))"
+        for cluster in $clusters; do
+            echo "Processing cluster $cluster"
+            if [ $nodeploy -eq 0 ]; then
+                external/ant/bin/ant build.deploy.cluster \
+                                     -Dpan.root.element="$id" \
+                                     -Ddeploy.debug.task=true -Dcluster=$cluster
 
-            for fil in `files_for_cluster $cluster` build/xml/profiles-info.xml
-            do
-                cp $fil /var/www/https/profiles
-            done
-        else
-            external/ant/bin/ant -Dcluster.name=$cluster -Dpan.root.element="$id"
-        fi
-        echo "Finished processing cluster $cluster: exitcode $?"
-    done
+                for fil in `files_for_cluster $cluster` build/xml/profiles-info.xml; do
+                    $sudo cp $fil /var/www/https/profiles
+                done
+            else
+                external/ant/bin/ant -Dcluster.name=$cluster -Dpan.root.element="$id"
+            fi
+            echo "Finished processing cluster $cluster: exitcode $?"
+        done
     else
-    echo "Processing all clusters"
-    external/ant/bin/ant build2
-    echo "Finished processing all clusters: exitcode $?"
+        echo "Processing all clusters"
+        external/ant/bin/ant build2
+        echo "Finished processing all clusters: exitcode $?"
     fi
 }
 
 
-if [ "$branch" = 'master' -a "$remote" != "origin" ]
-then
+if [ "$branch" = 'master' -a "$remote" != "origin" ]; then
     usage
 fi
 
-checkout_branch $remote $branch
+if [ -z "$cleanup" ]; then
 
+    checkout_branch $remote $branch
 
-set_secrets
+    set_secrets
 
-./updatetemplates
-rc=$?
+    $sudo ./updatetemplates
+    rc=$?
 
-### Compile and deploy ###
+    # Compile and deploy
+    compile_and_deploy
+else
+    rc=0
+fi
 
-compile_and_deploy
 cleanup_git $remote $branch
+
 exit $rc

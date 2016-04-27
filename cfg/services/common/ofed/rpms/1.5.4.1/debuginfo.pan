@@ -1,0 +1,30 @@
+unique template common/ofed/rpms/1.5.4.1/debuginfo;
+
+prefix "/software/packages";
+
+"{libmthca-debuginfo}"  = dict();
+"{infinipath-psm-debuginfo}"  = dict();
+"{libipathverbs-debuginfo}"  = dict();
+"{qperf-debuginfo}"  = dict();
+"{libibmad-debuginfo}"  = dict();
+"{perftest-debuginfo}"  = dict();
+"{libibumad-debuginfo}"  = dict();
+"{infiniband-diags-debuginfo}"  = dict();
+"{libnes-debuginfo}"  = dict();
+"{libmlx4-debuginfo}"  = dict();
+"{tgt-generic-debuginfo}"  = dict();
+"{rds-tools-debuginfo}"  = dict();
+"{libsdp-debuginfo}"  = dict();
+"{libibverbs-debuginfo}"  = dict();
+"{opensm-debuginfo}"  = dict();
+"{mstflint-debuginfo}"  = dict();
+"{compat-dapl-debuginfo}"  = dict();
+"{sdpnetstat-debuginfo}"  = dict();
+"{librdmacm-debuginfo}"  = dict();
+"{ibacm-debuginfo}"  = dict();
+"{ibutils-debuginfo}"  = dict();
+"{libcxgb3-debuginfo}"  = dict();
+"{dapl-debuginfo}"  = dict();
+"{libibcm-debuginfo}"  = dict();
+"{srptools-debuginfo}"  = dict();
+"{ibsim-debuginfo}"  = dict();

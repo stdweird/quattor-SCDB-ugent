@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# copy profiles
+# 1st arguments is regexp
+
+if [ "$USER" == 'root' ]; then
+    sudo=""
+else
+    sudo="sudo"
+fi
+
+
+usage() {
+    cat <<EOF
+Usage: copy <glob>
+
+Copy the *<glob>*.json.gz profiles to the destination.
+
+Example: copy node24[0-1]*golett
+
+Add quotes around the glob to prevent bash from expanding
+them before passing them to this script.
+
+EOF
+
+    exit 4
+}
+
+glob=`echo $1 | sed "s/\s/_/g; s/;/_/g"`
+
+if [ -z "$glob" ]; then
+    usage
+else
+    cpout=`$sudo /bin/cp -f build/xml/*$glob*.json.gz /var/www/https/profiles/ 2>&1`
+    if [ $? -eq 0 ]; then
+        echo "Copied build/xml/*$glob*.json.gz to /var/www/https/profiles/"
+    else
+        echo "ERROR: failed to copy build/xml/*$glob*.json.gz to /var/www/https/profiles/: $cpout"
+        exit 1
+    fi
+fi
