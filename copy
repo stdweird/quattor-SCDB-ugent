@@ -21,12 +21,18 @@ Example: copy node24[0-1]*golett
 Add quotes around the glob to prevent bash from expanding
 them before passing them to this script.
 
+You can also pass a second argument 'notify', to notify
+hosts that had new profiles copied.
+
 EOF
 
     exit 4
 }
 
 glob=`echo $1 | sed "s/\s/_/g; s/;/_/g"`
+shift
+
+notify=$1
 
 if [ -z "$glob" ]; then
     usage
@@ -37,5 +43,20 @@ else
     else
         echo "ERROR: failed to copy build/xml/*$glob*.json.gz to /var/www/https/profiles/: $cpout"
         exit 1
+    fi
+
+    if [ "$notify" == "notify" ]; then
+        notified=""
+        for host in `ls build/xml/*$glob*.json.gz | sed "s#build/xml/##;s/.json.gz//"`; do
+            echo "ccm.`date +%s`" > /dev/udp/$host/7777
+            if [ $? -eq 0 ]; then
+                notified="$notified $host"
+            else
+                echo "ERROR: failed to notify $host"
+            fi
+        done
+        if [ ! -z "$notified" ]; then
+            echo "Notified host(s)$notified"
+        fi
     fi
 fi

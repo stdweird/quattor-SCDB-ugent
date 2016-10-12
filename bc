@@ -1,10 +1,15 @@
 #!/bin/bash
 
+if [ ${DEBUG:-0} -eq 1 ]; then
+    set -x
+fi
+
 # The shopt command MUST BE THE FIRST EXECUTED LINE IN THIS SCRIPT
 # Otherwise the entire script will fail to parse!!!
 shopt -s extglob
 export LANG=C
 nodeploy=0
+compilets=''
 clusters=''
 remote=origin
 branch=master
@@ -28,8 +33,8 @@ $sudo chmod 770 $lockfile
 
 exec 9>$lockfile
 
-default=`hostname | awk -F. '$1 == "snorlax"{print "cubone"; exit};
-    $2=="gastly"{print "raichu gligar delcatty golett phanpy swalot"; exit};
+default=`hostname | awk -F. '$1 == "snorlax"{print "altaria shuppet cubone"; exit};
+    $2=="gastly"{print "raichu gligar delcatty golett phanpy swalot swablu banette gigalith"; exit};
     $2=="ugent"{print "uxie vulpix"; exit};
     {print $2; exit}
 '`
@@ -41,7 +46,7 @@ error() {
 
 usage() {
     cat <<EOF
-Usage: bc [--nodeploy] [--cleanup] [ <cluster> ] [ <remote> ] [ <branch> ]
+Usage: bc [--nodeploy] [--cleanup] [--timestamp] [ <cluster> ] [ <remote> ] [ <branch> ]
 
 With no arguments, it will deploy the default clusters to production.
 The default clusters are $default.
@@ -52,6 +57,9 @@ The next two arguments are a remote and a branch. The order doesn't
 matter. "master" is only allowed if pulling from origin.
 
 When --nodeploy is used, resulting profiles are not copied and nodes are not notified.
+
+When --timestamp is used, the compilation timestamp is added to the quattorid
+(creating unique profile for each compilation).
 
 It can happen that bc fails and leaves the directory in an unclean state.
 Then you can use --cleanup with correct <remote> and <branch> to restore the master.
@@ -73,8 +81,12 @@ if [ $# -gt 4 ]; then
 fi
 
 while [ $# -gt 0 ]; do
-    if [ "$1" = '--nodeploy' ]; then
+    if [[ ("$1" == "help") || ("$1" == "-h") || ("$1" == "--help") ]]; then
+        usage
+    elif [ "$1" = '--nodeploy' ]; then
         nodeploy=1
+    elif [ "$1" = '--timestamp' ]; then
+        compilets="-$(date +%s)"
     elif [ "$1" = '--cleanup' ]; then
         cleanup=1
     elif [ -z "$clusters" -a -z "$cleanup" ]; then
@@ -132,9 +144,12 @@ cleanup_git() {
 }
 
 # Sets the deployment identifier based on the date of the current
-# commit.
+# commit (and if --timestamp if used, the timestamp of the build).
 set_quattorid() {
-    cid=`git log -1  --date=raw | awk '/Date:/{print $2}'`
+    ts=`git log -1  --date=raw | awk '/Date:/{print $2}'`
+    if [ $? -gt 0 ]; then error "!!"; fi
+
+    sha=`git log -1  --date=raw | awk '/commit /{print substr($2,0,8)}'`
     if [ $? -gt 0 ]; then error "!!"; fi
 
     branch=`git name-rev HEAD|awk '{print $2}'`
@@ -144,7 +159,14 @@ set_quattorid() {
         exit 1
     fi
 
-    echo "$branch-$cid"
+    if [ $branch -eq "master" ]; then
+        type="production"
+    else
+        type="test"
+    fi
+
+    branchmd="'author', '$USER', 'name', '$branch', 'type', '$type', 'id', '$sha$compilets', 'timestamp', $ts"
+    echo "dict('system', dict('quattorid', '$branch-$ts$compilets'), 'metadata', dict('template', dict('branch', dict($branchmd))))"
 }
 
 # Pulls the passwords and other secrets we ship via Quattor but don't
@@ -188,7 +210,7 @@ files_for_cluster() {
 compile_and_deploy() {
 
     if [ `basename $0` == "bc" ]; then
-        local id="nlist('system', nlist('quattorid', '`set_quattorid`'))"
+        local id=`set_quattorid`
         for cluster in $clusters; do
             echo "Processing cluster $cluster"
             if [ $nodeploy -eq 0 ]; then
@@ -196,7 +218,7 @@ compile_and_deploy() {
                                      -Dpan.root.element="$id" \
                                      -Ddeploy.debug.task=true -Dcluster=$cluster
 
-                for fil in `files_for_cluster $cluster` build/xml/profiles-info.xml; do
+                for fil in `files_for_cluster $cluster`; do
                     $sudo cp $fil /var/www/https/profiles
                 done
             else
@@ -209,6 +231,12 @@ compile_and_deploy() {
         external/ant/bin/ant build2
         echo "Finished processing all clusters: exitcode $?"
     fi
+
+    # generate the profiles-info
+    prof_file=/var/www/https/profiles/profiles-info.xml
+    local_prof_file=build/xml/profiles-info.xml
+    # uniq -s 31 checks uniueness on hostnames, ignores the fixed length 31 characters incl the mtime
+    sudo bash -c "echo '<profiles>' > $prof_file.new; grep -h 'profile ' $local_prof_file $prof_file 2>/dev/null  |sort | uniq -s 31 >> $prof_file.new;echo '</profiles>' >> $prof_file.new;mv -f $prof_file.new $prof_file"
 }
 
 
